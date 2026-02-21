@@ -2,71 +2,72 @@
 <html>
 <head>
 <title>Suprise Scoop</title>
-
 <style>
 body{
-margin:0;
-font-family:Arial;
-background:linear-gradient(to bottom,#ffd6e8,#fff0f5);
-color:#444;
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(to bottom,#ffd6e8,#fff0f5);
+  color:#444;
 }
 .section{
-padding:60px 20px;
-text-align:center;
+  padding:60px 20px;
+  text-align:center;
 }
 h1,h2{
-color:#ff4da6;
+  color:#ff4da6;
 }
 .card{
-background:white;
-margin:20px;
-padding:30px;
-border-radius:25px;
-box-shadow:0 5px 20px rgba(0,0,0,0.1);
+  background:white;
+  margin:20px;
+  padding:30px;
+  border-radius:25px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.1);
 }
 button{
-background:#ff66b2;
-border:none;
-padding:12px 20px;
-border-radius:25px;
-color:white;
-font-size:18px;
-margin:8px;
-cursor:pointer;
+  background:#ff66b2;
+  border:none;
+  padding:12px 20px;
+  border-radius:25px;
+  color:white;
+  font-size:18px;
+  margin:8px;
+  cursor:pointer;
 }
 input{
-padding:10px;
-width:85%;
-margin:8px;
-border-radius:15px;
-border:1px solid #ddd;
+  padding:10px;
+  width:85%;
+  margin:8px;
+  border-radius:15px;
+  border:1px solid #ddd;
 }
 </style>
 </head>
-
 <body>
 
+<!-- Welcome Section -->
 <div class="section">
-<h1>Welcome Cuties 💖</h1>
-<p>Unbox happiness with Suprise Scoop ✨</p>
+  <h1>Welcome Cuties 💖</h1>
+  <p>Unbox happiness with Suprise Scoop ✨</p>
 </div>
 
+<!-- Scoop Section -->
 <div class="section card">
-<h2>₹599 Per Scoop 💕</h2>
-<button onclick="minus()">-</button>
-<span id="qty" style="font-size:22px;">1</span>
-<button onclick="plus()">+</button>
-<p id="scoopTotal">Scoop Total: ₹599</p>
+  <h2>₹599 Per Scoop 💕</h2>
+  <button onclick="minus()">-</button>
+  <span id="qty" style="font-size:22px;">1</span>
+  <button onclick="plus()">+</button>
+  <p id="scoopTotal">Scoop Total: ₹599</p>
 </div>
 
+<!-- Customer Details Section -->
 <div class="section card">
-<h2>Customer Details ✨</h2>
-<input type="text" id="custName" placeholder="Customer Name"><br>
-<input type="text" id="custAddress" placeholder="Customer Address"><br>
-<input type="number" id="delivery" placeholder="Delivery Charges"><br>
-<p id="grandTotal">Grand Total: ₹599</p>
-<!-- Buy button opens WhatsApp directly -->
-<button onclick="buy()">Buy 💗</button>
+  <h2>Customer Details ✨</h2>
+  <input type="text" placeholder="Customer Name"><br>
+  <input type="text" placeholder="Customer Address"><br>
+  <input type="number" id="delivery" placeholder="Delivery Charges"><br>
+  <p id="grandTotal">Grand Total: ₹599</p>
+  <!-- Buy button opens WhatsApp -->
+  <button onclick="buy()">Buy 💗</button>
 </div>
 
 <script>
@@ -74,43 +75,43 @@ let price = 599;
 let quantity = 1;
 
 function updateTotal(){
-let delivery = parseInt(document.getElementById("delivery").value) || 0;
-let scoopMoney = price * quantity;
-let grand = scoopMoney + delivery;
-document.getElementById("scoopTotal").innerHTML =
-"Scoop Total: ₹" + scoopMoney;
-document.getElementById("grandTotal").innerHTML =
-"Grand Total: ₹" + grand;
+    let delivery = parseInt(document.getElementById("delivery").value) || 0;
+    let scoopMoney = price * quantity;
+    let grand = scoopMoney + delivery;
+    document.getElementById("scoopTotal").innerHTML =
+        "Scoop Total: ₹" + scoopMoney;
+    document.getElementById("grandTotal").innerHTML =
+        "Grand Total: ₹" + grand;
 }
 
 function plus(){
-quantity++;
-document.getElementById("qty").innerHTML = quantity;
-updateTotal();
+    quantity++;
+    document.getElementById("qty").innerHTML = quantity;
+    updateTotal();
 }
 
 function minus(){
-if(quantity>1){
-quantity--;
-document.getElementById("qty").innerHTML = quantity;
-updateTotal();
-}
+    if(quantity>1){
+        quantity--;
+        document.getElementById("qty").innerHTML = quantity;
+        updateTotal();
+    }
 }
 
 document.getElementById("delivery").addEventListener("input",updateTotal);
 
 function buy(){
-let name = document.getElementById("custName").value || "Not provided";
-let address = document.getElementById("custAddress").value || "Not provided";
-let delivery = parseInt(document.getElementById("delivery").value) || 0;
-let scoopMoney = price * quantity;
-let grand = scoopMoney + delivery;
+    let name = document.querySelector('input[placeholder="Customer Name"]').value || "Not provided";
+    let address = document.querySelector('input[placeholder="Customer Address"]').value || "Not provided";
+    let delivery = parseInt(document.getElementById("delivery").value) || 0;
+    let scoopMoney = price * quantity;
+    let grand = scoopMoney + delivery;
 
-let message = `Hi! I want to order Suprise Scoop.%0AName: ${name}%0AAddress: ${address}%0AQuantity: ${quantity}%0AScoop Total: ₹${scoopMoney}%0ADelivery: ₹${delivery}%0AGrand Total: ₹${grand}`;
-let waLink = "https://wa.me/917013100850?text=" + message;
+    // WhatsApp message
+    let message = `Hi! I want to order Suprise Scoop.%0AName: ${name}%0AAddress: ${address}%0AQuantity: ${quantity}%0AScoop Total: ₹${scoopMoney}%0ADelivery: ₹${delivery}%0AGrand Total: ₹${grand}`;
 
-// Open WhatsApp directly
-window.open(waLink, "_blank");
+    let waLink = "https://wa.me/917013100850?text=" + message;
+    window.open(waLink, "_blank");
 }
 </script>
 
