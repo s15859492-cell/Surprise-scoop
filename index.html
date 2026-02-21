@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Suprise Scoop</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:linear-gradient(to bottom,#ffd6e8,#fff0f5);
+color:#444;
+}
+.section{
+padding:60px 20px;
+text-align:center;
+}
+h1,h2{
+color:#ff4da6;
+}
+.card{
+background:white;
+margin:20px;
+padding:30px;
+border-radius:25px;
+box-shadow:0 5px 20px rgba(0,0,0,0.1);
+}
+button{
+background:#ff66b2;
+border:none;
+padding:12px 20px;
+border-radius:25px;
+color:white;
+font-size:18px;
+margin:8px;
+}
+input{
+padding:10px;
+width:85%;
+margin:8px;
+border-radius:15px;
+border:1px solid #ddd;
+}
+</style>
+</head>
+
+<body>
+
+<div class="section">
+<h1>Welcome Cuties 💖</h1>
+<p>Unbox happiness with Suprise Scoop ✨</p>
+</div>
+
+<div class="section card">
+<h2>₹599 Per Scoop 💕</h2>
+<button onclick="minus()">-</button>
+<span id="qty" style="font-size:22px;">1</span>
+<button onclick="plus()">+</button>
+<p id="scoopTotal">Scoop Total: ₹599</p>
+</div>
+
+<div class="section card">
+<h2>Customer Details ✨</h2>
+<input type="text" placeholder="Customer Name"><br>
+<input type="text" placeholder="Customer Address"><br>
+<input type="number" id="delivery" placeholder="Delivery Charges"><br>
+<p id="grandTotal">Grand Total: ₹599</p>
+<button onclick="buy()">Buy 💗</button>
+</div>
+
+<div class="section card" id="payment" style="display:none;">
+<h2>Online Payment Only 💳</h2>
+<p>PhonePe Number:</p>
+<h3>7013100850</h3>
+<p>Please complete payment and send screenshot 💕</p>
+</div>
+
+<script>
+let price = 599;
+let quantity = 1;
+
+function updateTotal(){
+let delivery = parseInt(document.getElementById("delivery").value) || 0;
+let scoopMoney = price * quantity;
+let grand = scoopMoney + delivery;
+document.getElementById("scoopTotal").innerHTML =
+"Scoop Total: ₹" + scoopMoney;
+document.getElementById("grandTotal").innerHTML =
+"Grand Total: ₹" + grand;
+}
+
+function plus(){
+quantity++;
+document.getElementById("qty").innerHTML = quantity;
+updateTotal();
+}
+
+function minus(){
+if(quantity>1){
+quantity--;
+document.getElementById("qty").innerHTML = quantity;
+updateTotal();
+}
+}
+
+document.getElementById("delivery").addEventListener("input",updateTotal);
+
+function buy(){
+document.getElementById("payment").style.display="block";
+}
+</script>
+
+</body>
+</html>
