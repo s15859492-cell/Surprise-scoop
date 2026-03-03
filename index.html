@@ -4,19 +4,23 @@
 <title>Suprise Scoop</title>
 <style>
 body {
-  font-family: Arial;
-  background: #ffe6f2;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: linear-gradient(to bottom, #ffe6f2, #fff5fa);
   text-align: center;
 }
 
 section { padding: 40px; }
 
+h1 { color: #ff3399; }
+
 .box {
   background: white;
   padding: 25px;
-  border-radius: 20px;
+  border-radius: 25px;
   display: inline-block;
   box-shadow: 0px 5px 20px rgba(255,105,180,0.3);
+  margin-top: 20px;
 }
 
 button {
@@ -26,7 +30,10 @@ button {
   color: white;
   border-radius: 20px;
   cursor: pointer;
+  margin: 5px;
 }
+
+button:hover { background: #ff3385; }
 
 input, textarea {
   padding: 8px;
@@ -59,16 +66,16 @@ input, textarea {
 <h2>Order Details</h2>
 
 <input type="text" id="name" placeholder="Customer Name"><br>
+<input type="text" id="address" placeholder="Customer Address"><br>
 <textarea id="note" placeholder="Note"></textarea><br>
 
-<p>Scoops Total: ₹<span id="scoopTotal">1999</span></p>
+<p>Distance: <span id="distanceText">Not calculated</span></p>
 <p>Delivery Charges: ₹<span id="deliveryCharge">0</span></p>
+<p>Scoops Total: ₹<span id="scoopTotal">1999</span></p>
 <h3>Grand Total: ₹<span id="grandTotal">1999</span></h3>
 
-<button onclick="getLocation()">Calculate Delivery</button>
-<button onclick="sendWhatsApp()">Buy Now 💖</button>
-
-<p id="status"></p>
+<button onclick="calculateDelivery()">Calculate Delivery 💖</button>
+<button onclick="sendWhatsApp()">Buy Now 🎀</button>
 
 </div>
 </section>
@@ -78,11 +85,11 @@ let scoop = 1;
 let price = 1999;
 let deliveryPerKm = 20;
 
-// Your shop location (Gorantla approx coordinates)
+// Gorantla approx coordinates
 let shopLat = 13.9833;
 let shopLon = 77.7667;
 
-function updateTotal(delivery=0) {
+function updateTotal(delivery = 0){
   let scoopTotal = scoop * price;
   document.getElementById("count").innerText = scoop;
   document.getElementById("scoopTotal").innerText = scoopTotal;
@@ -90,48 +97,64 @@ function updateTotal(delivery=0) {
   document.getElementById("grandTotal").innerText = scoopTotal + delivery;
 }
 
-function plus(){ scoop++; updateTotal(); }
-function minus(){ if(scoop>1){ scoop--; updateTotal(); } }
+function plus(){
+  scoop++;
+  updateTotal(parseInt(document.getElementById("deliveryCharge").innerText));
+}
 
-function getDistance(lat1, lon1, lat2, lon2) {
+function minus(){
+  if(scoop > 1){
+    scoop--;
+    updateTotal(parseInt(document.getElementById("deliveryCharge").innerText));
+  }
+}
+
+function getDistance(lat1, lon1, lat2, lon2){
   let R = 6371;
   let dLat = (lat2-lat1) * Math.PI/180;
   let dLon = (lon2-lon1) * Math.PI/180;
+
   let a =
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) *
-    Math.sin(dLon/2) * Math.sin(dLon/2);
+    Math.sin(dLat/2)*Math.sin(dLat/2) +
+    Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180) *
+    Math.sin(dLon/2)*Math.sin(dLon/2);
+
   let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
   return R * c;
 }
 
-function getLocation(){
+function calculateDelivery(){
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(function(position){
       let userLat = position.coords.latitude;
       let userLon = position.coords.longitude;
 
       let distance = getDistance(shopLat, shopLon, userLat, userLon);
-      let deliveryCharge = Math.round(distance * deliveryPerKm);
+      let delivery = Math.round(distance * deliveryPerKm);
 
-      updateTotal(deliveryCharge);
+      document.getElementById("distanceText").innerText =
+        distance.toFixed(2) + " km";
 
-      document.getElementById("status").innerText =
-        "Distance: " + distance.toFixed(2) + " km";
+      updateTotal(delivery);
+    },
+    function(){
+      alert("Please allow location access for delivery calculation.");
     });
   } else {
-    alert("Location not supported");
+    alert("Geolocation not supported in this browser.");
   }
 }
 
 function sendWhatsApp(){
   let name = document.getElementById("name").value;
+  let address = document.getElementById("address").value;
   let note = document.getElementById("note").value;
-  let total = document.getElementById("grandTotal").innerText;
   let delivery = document.getElementById("deliveryCharge").innerText;
+  let total = document.getElementById("grandTotal").innerText;
 
   let message = "Hello Suprise Scoop 💕%0A%0A" +
                 "Name: " + name + "%0A" +
+                "Address: " + address + "%0A" +
                 "Note: " + note + "%0A" +
                 "Delivery: ₹" + delivery + "%0A" +
                 "Total: ₹" + total;
