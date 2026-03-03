@@ -4,137 +4,144 @@
 <title>Suprise Scoop</title>
 <style>
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  background: #ffe6f0;
+  font-family: Arial;
+  background: #ffe6f2;
   text-align: center;
 }
 
-section {
-  padding: 60px 20px;
-}
+section { padding: 40px; }
 
-h1 {
-  color: #ff4da6;
-  font-size: 40px;
+.box {
+  background: white;
+  padding: 25px;
+  border-radius: 20px;
+  display: inline-block;
+  box-shadow: 0px 5px 20px rgba(255,105,180,0.3);
 }
 
 button {
-  padding: 10px 20px;
+  padding: 8px 18px;
   background: #ff66b2;
   border: none;
   color: white;
-  font-size: 18px;
   border-radius: 20px;
   cursor: pointer;
 }
 
-button:hover {
-  background: #ff3385;
-}
-
 input, textarea {
   padding: 8px;
-  margin: 10px;
+  margin: 8px;
   width: 250px;
   border-radius: 10px;
   border: 1px solid pink;
-}
-
-.box {
-  background: white;
-  padding: 30px;
-  border-radius: 20px;
-  display: inline-block;
-  box-shadow: 0px 0px 15px pink;
 }
 </style>
 </head>
 
 <body>
 
-<!-- Welcome Page -->
 <section>
-  <h1>Welcome Cuties 💕</h1>
-  <p>Welcome to Suprise Scoop 🎀</p>
+<h1>Welcome Cuties 💕</h1>
+<p>Suprise Scoop 🎀</p>
 </section>
 
-<!-- Scoop Selection -->
 <section>
-  <div class="box">
-    <h2>₹1999 Per Scoop</h2>
-    <button onclick="minus()">-</button>
-    <span id="count">1</span>
-    <button onclick="plus()">+</button>
-  </div>
+<div class="box">
+<h2>₹1999 Per Scoop</h2>
+<button onclick="minus()">-</button>
+<span id="count">1</span>
+<button onclick="plus()">+</button>
+</div>
 </section>
 
-<!-- Customer Details -->
 <section>
-  <div class="box">
-    <h2>Order Details</h2>
-    <input type="text" id="name" placeholder="Customer Name"><br>
-    <input type="text" id="address" placeholder="Customer Address"><br>
-    <textarea id="note" placeholder="Note"></textarea><br>
+<div class="box">
+<h2>Order Details</h2>
 
-    <p>Scoops Total: ₹<span id="scoopTotal">1999</span></p>
-    <p>Delivery Charges: ₹50</p>
-    <h3>Grand Total: ₹<span id="grandTotal">2049</span></h3>
+<input type="text" id="name" placeholder="Customer Name"><br>
+<textarea id="note" placeholder="Note"></textarea><br>
 
-    <button onclick="buy()">Buy</button>
-  </div>
+<p>Scoops Total: ₹<span id="scoopTotal">1999</span></p>
+<p>Delivery Charges: ₹<span id="deliveryCharge">0</span></p>
+<h3>Grand Total: ₹<span id="grandTotal">1999</span></h3>
+
+<button onclick="getLocation()">Calculate Delivery</button>
+<button onclick="sendWhatsApp()">Buy Now 💖</button>
+
+<p id="status"></p>
+
+</div>
 </section>
 
 <script>
 let scoop = 1;
 let price = 1999;
-let delivery = 50;
+let deliveryPerKm = 20;
 
-function updateTotal() {
-  document.getElementById("count").innerText = scoop;
+// Your shop location (Gorantla approx coordinates)
+let shopLat = 13.9833;
+let shopLon = 77.7667;
+
+function updateTotal(delivery=0) {
   let scoopTotal = scoop * price;
+  document.getElementById("count").innerText = scoop;
   document.getElementById("scoopTotal").innerText = scoopTotal;
+  document.getElementById("deliveryCharge").innerText = delivery;
   document.getElementById("grandTotal").innerText = scoopTotal + delivery;
 }
 
-function plus() {
-  scoop++;
-  updateTotal();
+function plus(){ scoop++; updateTotal(); }
+function minus(){ if(scoop>1){ scoop--; updateTotal(); } }
+
+function getDistance(lat1, lon1, lat2, lon2) {
+  let R = 6371;
+  let dLat = (lat2-lat1) * Math.PI/180;
+  let dLon = (lon2-lon1) * Math.PI/180;
+  let a =
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) *
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
 }
 
-function minus() {
-  if (scoop > 1) {
-    scoop--;
-    updateTotal();
+function getLocation(){
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(function(position){
+      let userLat = position.coords.latitude;
+      let userLon = position.coords.longitude;
+
+      let distance = getDistance(shopLat, shopLon, userLat, userLon);
+      let deliveryCharge = Math.round(distance * deliveryPerKm);
+
+      updateTotal(deliveryCharge);
+
+      document.getElementById("status").innerText =
+        "Distance: " + distance.toFixed(2) + " km";
+    });
+  } else {
+    alert("Location not supported");
   }
 }
 
-function buy() {
+function sendWhatsApp(){
   let name = document.getElementById("name").value;
-  let address = document.getElementById("address").value;
   let note = document.getElementById("note").value;
   let total = document.getElementById("grandTotal").innerText;
+  let delivery = document.getElementById("deliveryCharge").innerText;
 
-  // PhonePe UPI link
-  let upiLink = "upi://pay?pa=7013100850@upi&pn=SupriseScoop&am=" + total + "&cu=INR";
+  let message = "Hello Suprise Scoop 💕%0A%0A" +
+                "Name: " + name + "%0A" +
+                "Note: " + note + "%0A" +
+                "Delivery: ₹" + delivery + "%0A" +
+                "Total: ₹" + total;
 
-  // WhatsApp message
-  let message = "Hello! I have placed an order.%0AName: " + name +
-                "%0AAddress: " + address +
-                "%0ANote: " + note +
-                "%0ATotal: ₹" + total;
-
-  let whatsappLink = "https://wa.me/7013100850?text=" + message;
-
-  // Open PhonePe first
-  window.location.href = upiLink;
-
-  // Then open WhatsApp after 2 seconds
-  setTimeout(function(){
-    window.open(whatsappLink, "_blank");
-  },2000);
+  window.open("https://wa.me/7013100850?text=" + message, "_blank");
 }
+
+updateTotal();
 </script>
 
 </body>
 </html>
+
