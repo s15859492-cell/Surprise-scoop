@@ -2,126 +2,137 @@
 <html>
 <head>
 <title>Suprise Scoop</title>
-
 <style>
-body{
-margin:0;
-font-family:Arial;
-background:linear-gradient(to bottom,#ffd6e8,#fff0f5);
-color:#444;
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #ffe6f0;
+  text-align: center;
 }
 
-.section{
-padding:60px 20px;
-text-align:center;
+section {
+  padding: 60px 20px;
 }
 
-h1,h2{
-color:#ff4da6;
+h1 {
+  color: #ff4da6;
+  font-size: 40px;
 }
 
-.card{
-background:white;
-margin:20px;
-padding:30px;
-border-radius:25px;
-box-shadow:0 5px 20px rgba(0,0,0,0.1);
+button {
+  padding: 10px 20px;
+  background: #ff66b2;
+  border: none;
+  color: white;
+  font-size: 18px;
+  border-radius: 20px;
+  cursor: pointer;
 }
 
-button{
-background:#ff66b2;
-border:none;
-padding:12px 20px;
-border-radius:25px;
-color:white;
-font-size:18px;
-margin:8px;
-cursor:pointer;
+button:hover {
+  background: #ff3385;
 }
 
-input{
-padding:10px;
-width:85%;
-margin:8px;
-border-radius:15px;
-border:1px solid #ddd;
+input, textarea {
+  padding: 8px;
+  margin: 10px;
+  width: 250px;
+  border-radius: 10px;
+  border: 1px solid pink;
 }
 
-.logo{
-width:140px;
-border-radius:50%;
-margin-bottom:20px;
+.box {
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  display: inline-block;
+  box-shadow: 0px 0px 15px pink;
 }
 </style>
 </head>
 
 <body>
 
-<!-- 🌸 Welcome Page -->
-<div class="section">
-<h1>Welcome Cuties 💖</h1>
-<p>Unbox happiness with Suprise Scoop ✨</p>
-</div>
+<!-- Welcome Page -->
+<section>
+  <h1>Welcome Cuties 💕</h1>
+  <p>Welcome to Suprise Scoop 🎀</p>
+</section>
 
-<!-- 🌸 Scoop Section -->
-<div class="section card">
-<h2>₹599 Per Scoop 💕</h2>
-<button onclick="minus()">-</button>
-<span id="qty" style="font-size:22px;">1</span>
-<button onclick="plus()">+</button>
-<p id="scoopTotal">Scoop Total: ₹599</p>
-</div>
+<!-- Scoop Selection -->
+<section>
+  <div class="box">
+    <h2>₹1999 Per Scoop</h2>
+    <button onclick="minus()">-</button>
+    <span id="count">1</span>
+    <button onclick="plus()">+</button>
+  </div>
+</section>
 
-<!-- 🌸 Customer Section -->
-<div class="section card">
-<h2>Customer Details ✨</h2>
-<input type="text" id="custName" placeholder="Customer Name"><br>
-<input type="text" id="custAddress" placeholder="Customer Address"><br>
-<input type="number" id="delivery" placeholder="Delivery Charges"><br>
-<p id="grandTotal">Grand Total: ₹599</p>
-<button onclick="buy()">Buy 💗</button>
-</div>
+<!-- Customer Details -->
+<section>
+  <div class="box">
+    <h2>Order Details</h2>
+    <input type="text" id="name" placeholder="Customer Name"><br>
+    <input type="text" id="address" placeholder="Customer Address"><br>
+    <textarea id="note" placeholder="Note"></textarea><br>
+
+    <p>Scoops Total: ₹<span id="scoopTotal">1999</span></p>
+    <p>Delivery Charges: ₹50</p>
+    <h3>Grand Total: ₹<span id="grandTotal">2049</span></h3>
+
+    <button onclick="buy()">Buy</button>
+  </div>
+</section>
 
 <script>
-let price = 599;
-let quantity = 1;
+let scoop = 1;
+let price = 1999;
+let delivery = 50;
 
-function updateTotal(){
-    let delivery = parseInt(document.getElementById("delivery").value) || 0;
-    let scoopMoney = price * quantity;
-    let grand = scoopMoney + delivery;
-
-    document.getElementById("scoopTotal").innerHTML = "Scoop Total: ₹" + scoopMoney;
-    document.getElementById("grandTotal").innerHTML = "Grand Total: ₹" + grand;
+function updateTotal() {
+  document.getElementById("count").innerText = scoop;
+  let scoopTotal = scoop * price;
+  document.getElementById("scoopTotal").innerText = scoopTotal;
+  document.getElementById("grandTotal").innerText = scoopTotal + delivery;
 }
 
-function plus(){
-    quantity++;
-    document.getElementById("qty").innerHTML = quantity;
+function plus() {
+  scoop++;
+  updateTotal();
+}
+
+function minus() {
+  if (scoop > 1) {
+    scoop--;
     updateTotal();
+  }
 }
 
-function minus(){
-    if(quantity>1){
-        quantity--;
-        document.getElementById("qty").innerHTML = quantity;
-        updateTotal();
-    }
-}
+function buy() {
+  let name = document.getElementById("name").value;
+  let address = document.getElementById("address").value;
+  let note = document.getElementById("note").value;
+  let total = document.getElementById("grandTotal").innerText;
 
-document.getElementById("delivery").addEventListener("input", updateTotal);
+  // PhonePe UPI link
+  let upiLink = "upi://pay?pa=7013100850@upi&pn=SupriseScoop&am=" + total + "&cu=INR";
 
-function buy(){
-    let name = document.getElementById("custName").value || "Not provided";
-    let address = document.getElementById("custAddress").value || "Not provided";
-    let delivery = parseInt(document.getElementById("delivery").value) || 0;
-    let scoopMoney = price * quantity;
-    let grand = scoopMoney + delivery;
+  // WhatsApp message
+  let message = "Hello! I have placed an order.%0AName: " + name +
+                "%0AAddress: " + address +
+                "%0ANote: " + note +
+                "%0ATotal: ₹" + total;
 
-    let message = `Hi! I want to order Suprise Scoop.%0AName: ${name}%0AAddress: ${address}%0AQuantity: ${quantity}%0AScoop Total: ₹${scoopMoney}%0ADelivery: ₹${delivery}%0AGrand Total: ₹${grand}`;
-    let waLink = "https://wa.me/917013100850?text=" + message;
+  let whatsappLink = "https://wa.me/7013100850?text=" + message;
 
-    window.open(waLink, "_blank");
+  // Open PhonePe first
+  window.location.href = upiLink;
+
+  // Then open WhatsApp after 2 seconds
+  setTimeout(function(){
+    window.open(whatsappLink, "_blank");
+  },2000);
 }
 </script>
 
